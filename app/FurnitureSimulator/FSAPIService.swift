@@ -17,7 +17,7 @@ enum FSAPIService {
 
 extension FSAPIService: TargetType {
   var baseURL: URL {
-    URL(string: "http://127.0.0.1:8000")!
+    URL(string: "http://13.125.249.235")!
   }
   
   var path: String {

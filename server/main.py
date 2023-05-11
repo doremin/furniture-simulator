@@ -19,14 +19,12 @@ async def models():
 
 @app.get("/model/{model_name}")
 async def model_info(model_name: str):
-    response = []
+    response = {}
 
     files = os.listdir(f"{model_dir_path}/{model_name}")
     for file in files:
         _, ext = os.path.splitext(file)
-        response.append({
-            ext_to_keyname[ext]: file
-        })
+        ext_to_keyname[ext]: file
         
     return response
 

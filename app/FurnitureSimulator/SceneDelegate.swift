@@ -20,10 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     self.window?.makeKeyAndVisible()
     
     let provider = MoyaProvider<FSAPIService>()
-    provider.request(.model) { result in
+    provider.request(.modelInfo(modelName: "cube")) { result in
       switch result {
       case .success(let response):
-        print(response)
+        print(try! response.mapJSON())
       case .failure(let error):
         print(error)
       }
