@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Moya
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   var window: UIWindow?
@@ -17,6 +19,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     self.window?.rootViewController = ViewController()
     self.window?.makeKeyAndVisible()
     
+    let provider = MoyaProvider<FSAPIService>()
+    provider.request(.model) { result in
+      switch result {
+      case .success(let response):
+        print(response)
+      case .failure(let error):
+        print(error)
+      }
+    }
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {
