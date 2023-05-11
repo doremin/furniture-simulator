@@ -12,6 +12,10 @@ ext_to_keyname = {
     ".png": "thumbnail"
 }
 
+@app.get("/")
+async def index():
+    return "O_O"
+
 @app.get("/model")
 async def models():
     files = os.listdir(model_dir_path)
