@@ -14,11 +14,11 @@ final class FurnitureListViewController: UIViewController {
   // MARK: UI
   
   // MARK: Properties
-  private let provider: MoyaProvider<FSAPIService>
+  private let fileService: FileService
   
   // MARK: Initialize
-  init(provider: MoyaProvider<FSAPIService>) {
-    self.provider = provider
+  init(fileService: FileService) {
+    self.fileService = fileService
     
     super.init()
   }

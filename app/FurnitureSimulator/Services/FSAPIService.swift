@@ -49,6 +49,20 @@ extension FSAPIService: TargetType {
     return [:]
   }
   
+  var sampleData: Data {
+    switch self {
+    case .model:
+      let data = ["cube", "couch", "table"]
+      if let data = try? JSONEncoder().encode(data) {
+        return data
+      } else {
+        return Data()
+      }
+    case .downloadModel:
+      return Data()
+    }
+  }
+  
   private var documentURL: URL {
     return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
   }

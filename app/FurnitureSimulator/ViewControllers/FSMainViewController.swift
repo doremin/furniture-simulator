@@ -9,6 +9,7 @@ import UIKit
 
 import ARKit
 import SceneKit.ModelIO
+import Moya
 
 final class FSMainViewController: UIViewController {
   
@@ -50,6 +51,19 @@ final class FSMainViewController: UIViewController {
       
       self.removeButton.isHidden = self.selectedNode == nil
     }
+  }
+  
+  private let fileService: FileService
+  
+  // MARK: Initialize
+  init(fileService: FileService) {
+    self.fileService = fileService
+    
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
   
   // MARK: View Controller Life Cycle
@@ -98,7 +112,7 @@ final class FSMainViewController: UIViewController {
   }
   
   @objc func furnitureListButtonTapped() {
-    let furnitureListViewController = FurnitureListViewController()
+    let furnitureListViewController = FurnitureListViewController(fileService: self.fileService)
     furnitureListViewController.modalPresentationStyle = .formSheet
     
     self.present(furnitureListViewController, animated: true)
@@ -183,7 +197,7 @@ final class FSMainViewController: UIViewController {
   }
   
   func addItem(raycastResult: ARRaycastResult) {
-    let node = loadModel()
+    let node = self.fileService.loadModel(modelName: "cube.obj")
     
     let transform = raycastResult.worldTransform
     
@@ -191,42 +205,7 @@ final class FSMainViewController: UIViewController {
     
     node.position = SCNVector3(x: column.x, y: column.y, z: column.z)
     self.mainView.scene.rootNode.addChildNode(node)
-    
-//    let transform = Transform(matrix: raycastResult.worldTransform)
-//    entity.transform = transform
-//
-//    // or anchor an entity to an ARRaycastResult
-//    let anchor = AnchorEntity(raycastResult: raycastResult)
-//    anchor.addChild(entity)
-//    self.arView.addAnchor(anchor)
   }
-  
-  
-  
-  func loadModel() -> SCNNode {
-    //1. Get The Path Of The Downloaded File
-    let path = Bundle.main.path(forResource: "untitled", ofType: "obj")!
-    let pathURL = URL(filePath: path)
-    let asset = MDLAsset(url: pathURL)
-    asset.loadTextures()
-    let node = SCNScene(mdlAsset: asset).rootNode.flattenedClone()
-    node.scale = SCNVector3(x: 0.1, y: 0.1, z: 0.1)
-    return node
-    
-    //    self.mainView.focus
-    
-    
-    //    MDLAsset(url: )
-    //      let downloadedScenePath = getDocumentsDirectory().appendingPathComponent("nike.usdz")
-    //      self.mainView.autoenablesDefaultLighting = true
-    //      self.mainView.showsStatistics=true
-    //      let asset = MDLAsset(url: downloadedScenePath)
-    //      asset.loadTextures()
-    //      let scene = SCNScene(mdlAsset: asset)
-    
-    //    self.mainV
-  }
-  
 }
 
 extension FSMainViewController: ARSCNViewDelegate {
