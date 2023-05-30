@@ -36,11 +36,25 @@ extension FSAPIService: TargetType {
   }
   
   var task: Moya.Task {
-    return .requestPlain
+    switch self {
+    case .downloadModel(_, let fileName):
+      return .downloadDestination { _, _ in
+        let url = documentURL.appendingPathComponent(fileName)
+        
+        return (url, [.removePreviousFile])
+      }
+    case .model, .modelInfo:
+      return .requestPlain
+    }
   }
   
   var headers: [String : String]? {
     return [:]
+  }
+  
+  var documentURL: URL {
+    return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    
   }
   
 }

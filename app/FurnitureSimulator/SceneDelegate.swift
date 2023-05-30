@@ -20,10 +20,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     self.window?.makeKeyAndVisible()
     
     let provider = MoyaProvider<FSAPIService>()
-    provider.request(.modelInfo(modelName: "cube")) { result in
+    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    provider.request(.downloadModel(modelName: "cube", fileName: "cube.obj")) { result in
       switch result {
-      case .success(let response):
-        print(try! response.mapJSON())
+      case .success(_):
+        print(try! FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil))
       case .failure(let error):
         print(error)
       }
