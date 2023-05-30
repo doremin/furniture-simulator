@@ -10,11 +10,13 @@ import UIKit
 import ARKit
 import SceneKit.ModelIO
 
-class ViewController: UIViewController {
+final class FSMainViewController: UIViewController {
   
-  // MARK: View
+  // MARK: UI
   private let mainView = ARSCNView()
+  
   private let planeDetectingView = PlaneDetectingView()
+  
   private lazy var removeButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .white
@@ -23,6 +25,17 @@ class ViewController: UIViewController {
     button.setTitleColor(.black, for: .normal)
     button.isHidden = true
     button.addTarget(self, action: #selector(self.removeButtonTapped), for: .touchUpInside)
+    
+    return button
+  }()
+  
+  private lazy var furnitureListButton: UIButton = {
+    let button = UIButton()
+    button.backgroundColor = .white
+    button.layer.cornerRadius = 20
+    button.setTitle("Furnitures", for: .normal)
+    button.setTitleColor(.black, for: .normal)
+    button.addTarget(self, action: #selector(self.furnitureListButtonTapped), for: .touchUpInside)
     
     return button
   }()
@@ -60,11 +73,14 @@ class ViewController: UIViewController {
     
     self.mainView.addSubview(self.planeDetectingView)
     self.mainView.addSubview(self.removeButton)
+    self.mainView.addSubview(self.furnitureListButton)
     
     self.planeDetectingView.pin.all()
-    self.removeButton.pin.hCenter().bottom(self.view.pin.safeArea.bottom).width(100).height(30)
+    self.removeButton.pin.hCenter().top(self.view.pin.safeArea.top).width(100).height(30)
+    self.furnitureListButton.pin.hCenter().bottom(self.view.pin.safeArea.bottom).width(150).height(40)
   }
   
+  // MARK: Actions
   func attatchGestureRecognizers() {
     let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.mainViewTapped(sender:)))
     let rotationGestureRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(self.rotateObject(sender:)))
@@ -79,6 +95,13 @@ class ViewController: UIViewController {
   
   private func radianToDegrees(radian: CGFloat) -> CGFloat {
     return 180 / CGFloat.pi * radian
+  }
+  
+  @objc func furnitureListButtonTapped() {
+    let furnitureListViewController = FurnitureListViewController()
+    furnitureListViewController.modalPresentationStyle = .formSheet
+    
+    self.present(furnitureListViewController, animated: true)
   }
  
   @objc func removeButtonTapped() {
@@ -151,6 +174,11 @@ class ViewController: UIViewController {
       return
     }
     
+    guard self.selectedNode != hitTestResult.node else {
+      self.selectedNode = nil
+      return
+    }
+
     self.selectedNode = hitTestResult.node
   }
   
@@ -201,7 +229,7 @@ class ViewController: UIViewController {
   
 }
 
-extension ViewController: ARSCNViewDelegate {
+extension FSMainViewController: ARSCNViewDelegate {
   func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
     guard anchor is ARPlaneAnchor else { return }
     

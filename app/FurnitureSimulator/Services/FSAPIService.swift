@@ -11,7 +11,6 @@ import Moya
 
 enum FSAPIService {
   case model
-  case modelInfo(modelName: String)
   case downloadModel(modelName: String, fileName: String)
 }
 
@@ -24,8 +23,6 @@ extension FSAPIService: TargetType {
     switch self {
     case .model:
       return "/model"
-    case .modelInfo(let modelName):
-      return "/model/\(modelName)"
     case let .downloadModel(modelName, fileName):
       return "model/\(modelName)/\(fileName)"
     }
@@ -43,7 +40,7 @@ extension FSAPIService: TargetType {
         
         return (url, [.removePreviousFile])
       }
-    case .model, .modelInfo:
+    case .model:
       return .requestPlain
     }
   }
@@ -52,9 +49,7 @@ extension FSAPIService: TargetType {
     return [:]
   }
   
-  var documentURL: URL {
+  private var documentURL: URL {
     return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    
   }
-  
 }

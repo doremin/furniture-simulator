@@ -16,10 +16,25 @@ ext_to_keyname = {
 async def index():
     return "O_O"
 
+@app.get("model")
+
 @app.get("/model")
 async def models():
-    files = os.listdir(model_dir_path)
-    return files
+    response = []
+    dirs = os.listdir(model_dir_path)
+    
+    for dir in dirs:
+        model_response = {}
+
+        files = os.listdir(f"{model_dir_path}/{dir}")
+
+        for file in files:
+            _, ext = os.path.splitext(file)
+            model_response[ext_to_keyname[ext]] = file
+        
+        response.append(model_response)
+
+    return response
 
 @app.get("/model/{model_name}")
 async def model_info(model_name: str):
