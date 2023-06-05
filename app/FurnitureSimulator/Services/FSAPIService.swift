@@ -16,7 +16,7 @@ enum FSAPIService {
 
 extension FSAPIService: TargetType {
   var baseURL: URL {
-    URL(string: "http://13.125.249.235")!
+    URL(string: "http://13.209.49.118")!
   }
   
   var path: String {
@@ -39,7 +39,7 @@ extension FSAPIService: TargetType {
         let modelName = FileService.removeExtension(fileName: fileName)
         let url = documentURL.appendingPathComponent(modelName)
         if !FileManager.default.fileExists(atPath: url.path()) {
-          try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+          try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         }
         
         return (url.appendingPathComponent(fileName), [.removePreviousFile])

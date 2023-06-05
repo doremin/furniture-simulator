@@ -15,12 +15,14 @@ final class FurnitureListViewController: UIViewController {
   
   // MARK: Properties
   private let fileService: FileService
+  private let furnitureModels: [FurnitureModel]
   
   // MARK: Initialize
   init(fileService: FileService) {
     self.fileService = fileService
+    self.furnitureModels = self.fileService.loadModels()
     
-    super.init()
+    super.init(nibName: nil, bundle: nil)
   }
   
   required init?(coder: NSCoder) {
@@ -32,5 +34,6 @@ final class FurnitureListViewController: UIViewController {
     super.viewDidLoad()
     
     self.view.backgroundColor = .white
+    print(fileService.loadModels())
   }
 }

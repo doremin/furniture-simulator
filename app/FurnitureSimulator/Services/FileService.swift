@@ -10,6 +10,11 @@ import Foundation
 import SceneKit.ModelIO
 import Moya
 
+enum Ext {
+  case png
+  case obj
+}
+
 final class FileService {
   
   private let provider: MoyaProvider<FSAPIService>
@@ -42,8 +47,40 @@ final class FileService {
     }
   }
   
-  private func updateModelErrorHandler(error: MoyaError) {
+  public func loadModels() -> [FurnitureModel] {
+    guard let contents = try? FileManager.default.contentsOfDirectory(at: documentURL, includingPropertiesForKeys: nil) else {
+      return []
+    }
     
+    return contents.compactMap { directoryURL -> FurnitureModel? in
+      guard let directoryContents = try? FileManager.default.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil) else {
+        return nil
+      }
+      
+      guard !directoryURL.lastPathComponent.starts(with: ".") else {
+        return nil
+      }
+      
+      var thumbnailURL = documentURL
+      var objURL = documentURL
+      
+      for content in directoryContents {
+        switch FileService.extensionOfFile(fileName: content.path()) {
+        case .obj:
+          objURL = content
+        case .png:
+          thumbnailURL = content
+        default:
+          return nil
+        }
+      }
+      
+      return FurnitureModel(objURL: objURL, thumbnailURL: thumbnailURL)
+    }
+  }
+  
+  private func updateModelErrorHandler(error: MoyaError) {
+    print(error)
   }
   
   private func updateModelSuccessHandler(response: Response) {
@@ -64,15 +101,27 @@ final class FileService {
             self.downloadFailureHandler(error: error)
           }
         }
+      
+      self.provider.request(
+        .downloadModel(modelName: modelName, fileName: modelInfo.thumbnail)
+      ) { result in
+          switch result {
+          case .success(let response):
+            self.downloadSuccessHandler(response: response)
+          case .failure(let error):
+            self.downloadFailureHandler(error: error)
+          }
+        }
+      
       }
   }
   
   private func downloadSuccessHandler(response: Response) {
-    
+    print("success")
   }
   
   private func downloadFailureHandler(error: MoyaError) {
-    
+    print(error)
   }
   
   static public func removeExtension(fileName: String) -> String {
@@ -81,5 +130,21 @@ final class FileService {
     }
     
     return String(fileName[fileName.startIndex ..< lastIndex])
+  }
+  
+  static public func extensionOfFile(fileName: String) -> Ext? {
+    guard let lastIndex = fileName.lastIndex(of: ".") else {
+      return nil
+    }
+    
+    let ext = String(fileName[fileName.index(lastIndex, offsetBy: 1) ..< fileName.endIndex])
+    
+    if ext == "png" {
+      return .png
+    } else if ext == "obj" {
+      return .obj
+    }
+    
+    return nil
   }
 }

@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     let provider = MoyaProvider<FSAPIService>()
     let fileService = FileService(provider: provider)
+    fileService.updateModels()
     
     self.window = UIWindow(windowScene: windowScene)
     self.window?.rootViewController = FSMainViewController(fileService: fileService)
