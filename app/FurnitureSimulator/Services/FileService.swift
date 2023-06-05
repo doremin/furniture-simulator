@@ -32,10 +32,50 @@ final class FileService {
   }
   
   public func updateModels() {
+    self.provider.request(.model) { result in
+      switch result {
+      case .success(let response):
+        self.updateModelSuccessHandler(response: response)
+      case .failure(let error):
+        self.updateModelErrorHandler(error: error)
+      }
+    }
+  }
+  
+  private func updateModelErrorHandler(error: MoyaError) {
     
   }
   
-  public func removeExtension(fileName: String) -> String {
+  private func updateModelSuccessHandler(response: Response) {
+    guard let modelResponse = JSONDecoder().decodeJSON([ModelInfo].self, data: response.data) else {
+      return
+    }
+    
+    modelResponse.forEach { modelInfo in
+      let modelName = FileService.removeExtension(fileName: modelInfo.model)
+    
+      self.provider.request(
+        .downloadModel(modelName: modelName, fileName: modelInfo.model)
+      ) { result in
+          switch result {
+          case .success(let response):
+            self.downloadSuccessHandler(response: response)
+          case .failure(let error):
+            self.downloadFailureHandler(error: error)
+          }
+        }
+      }
+  }
+  
+  private func downloadSuccessHandler(response: Response) {
+    
+  }
+  
+  private func downloadFailureHandler(error: MoyaError) {
+    
+  }
+  
+  static public func removeExtension(fileName: String) -> String {
     guard let lastIndex = fileName.lastIndex(of: ".") else {
       return fileName
     }

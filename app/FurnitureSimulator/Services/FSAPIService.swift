@@ -36,9 +36,13 @@ extension FSAPIService: TargetType {
     switch self {
     case .downloadModel(_, let fileName):
       return .downloadDestination { _, _ in
-        let url = documentURL.appendingPathComponent(fileName)
+        let modelName = FileService.removeExtension(fileName: fileName)
+        let url = documentURL.appendingPathComponent(modelName)
+        if !FileManager.default.fileExists(atPath: url.path()) {
+          try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+        }
         
-        return (url, [.removePreviousFile])
+        return (url.appendingPathComponent(fileName), [.removePreviousFile])
       }
     case .model:
       return .requestPlain
