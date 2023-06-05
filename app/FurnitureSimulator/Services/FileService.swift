@@ -27,9 +27,8 @@ final class FileService {
     return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
   }
   
-  public func loadModel(modelName: String) -> SCNNode {
-    let filePath = self.documentURL.appendingPathComponent(modelName)
-    let asset = MDLAsset(url: filePath)
+  public func loadModel(url: URL) -> SCNNode {
+    let asset = MDLAsset(url: url)
     asset.loadTextures()
     let node = SCNScene(mdlAsset: asset).rootNode.flattenedClone()
     node.scale = SCNVector3(x: 0.1, y: 0.1, z: 0.1)

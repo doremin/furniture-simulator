@@ -53,6 +53,8 @@ final class FSMainViewController: UIViewController {
     }
   }
   
+  private var targetNode: SCNNode? = nil
+  
   // MARK: Dependencies
   private let fileService: FileService
   
@@ -115,6 +117,10 @@ final class FSMainViewController: UIViewController {
   @objc func furnitureListButtonTapped() {
     let furnitureListViewController = FurnitureListViewController(fileService: self.fileService)
     furnitureListViewController.modalPresentationStyle = .formSheet
+    furnitureListViewController.onDismiss = { [weak self] model in
+      guard let self = self else { return }
+      self.targetNode = self.fileService.loadModel(url: model.objURL)
+    }
     
     self.present(furnitureListViewController, animated: true)
   }
@@ -198,7 +204,7 @@ final class FSMainViewController: UIViewController {
   }
   
   func addItem(raycastResult: ARRaycastResult) {
-    let node = self.fileService.loadModel(modelName: "cube.obj")
+    guard let node = self.targetNode else { return }
     
     let transform = raycastResult.worldTransform
     
