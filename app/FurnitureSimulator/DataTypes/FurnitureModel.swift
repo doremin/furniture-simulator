@@ -10,4 +10,5 @@ import Foundation
 struct FurnitureModel {
   let objURL: URL
   let thumbnailURL: URL
+  let mtl: URL
 }

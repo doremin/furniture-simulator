@@ -13,6 +13,7 @@ import Moya
 enum Ext {
   case png
   case obj
+  case mtl
 }
 
 final class FileService {
@@ -62,6 +63,7 @@ final class FileService {
       
       var thumbnailURL = documentURL
       var objURL = documentURL
+      var mtl = documentURL
       
       for content in directoryContents {
         switch FileService.extensionOfFile(fileName: content.path()) {
@@ -69,12 +71,14 @@ final class FileService {
           objURL = content
         case .png:
           thumbnailURL = content
+        case .mtl:
+          mtl = content
         default:
           return nil
         }
       }
       
-      return FurnitureModel(objURL: objURL, thumbnailURL: thumbnailURL)
+      return FurnitureModel(objURL: objURL, thumbnailURL: thumbnailURL, mtl: mtl)
     }
   }
   
@@ -142,6 +146,8 @@ final class FileService {
       return .png
     } else if ext == "obj" {
       return .obj
+    } else if ext == "mtl" {
+      return .mtl
     }
     
     return nil
